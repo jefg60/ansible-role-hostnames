@@ -26,18 +26,10 @@
   tags:
     - tty
 
-- name: deploy bashrc to root
+- name: deploy ps1.sh prompt script to /etc/profile.d
   copy:
-    src: bashrcs/bashrc_root
-    dest: /root/.bashrc
-    owner: root
-    group: root
-    mode: 0644
-
-- name: deploy bashrc to skel
-  copy:
-    src: bashrcs/bashrc_user
-    dest: /etc/skel/.bashrc
+    src: ps1.sh
+    dest: /etc/profile.d/
     owner: root
     group: root
     mode: 0644
