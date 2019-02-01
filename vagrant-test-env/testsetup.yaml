@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+    - name: clone bats from github
+      git:
+        repo: https://github.com/sstephenson/bats.git
+        dest: /home/vagrant/bats
+
+    - name: install bats
+      shell: "./install.sh /usr/local"
+      args:
+        chdir: /home/vagrant/bats
+        creates: /usr/local/bin/bats
+      become: yes

@@ -1,0 +1,77 @@
+# -*- mode: ruby -*-
+# vim: ft=ruby
+
+# ---- Configuration variables ----
+
+RAM ||= 512   # Default memory size in MB
+
+HOST12 ||= 'debian9-hostnames'
+HOST13 ||= 'ubuntu1804-hostnames'
+
+# Default Virtualbox .box
+BOX ||= "ubuntu/bionic64"
+
+HOSTS ||= {
+   "#{HOST12}" => [RAM, "generic/debian9", 12 ],
+   "#{HOST13}" => [RAM, BOX, 13 ]
+}
+
+
+# ---- Vagrant configuration ----
+
+Vagrant.configure(2) do |config|
+  HOSTS.each do | (name, cfg) |
+    ram, box, number, ipaddr = cfg
+
+    config.vm.define name do |machine|
+      machine.vm.box = box
+      machine.vm.provider "virtualbox" do |vbox|
+        vbox.memory = ram
+      end #provider
+
+      machine.vm.synced_folder "./", "/vagrant"
+
+      if number == 13 # only run the following against one vm
+        # install python2 on the ubuntu vm
+        machine.vm.provision "shell" do |s|
+          s.inline = "apt-get -y install python"
+        end
+      end # if number
+
+      # run the hostnames playbook
+      machine.vm.provision "ansible" do |ansible|
+        ansible.limit = "all"
+        ansible.playbook = "hostnames.yaml"
+        ansible.raw_arguments = ['-v']
+        # change ansible.tags for faster testing
+        ansible.tags = 'all'
+        ansible.extra_vars = {
+          ansible_ssh_user: 'vagrant'
+        }
+      end # machine.vm.provision ansible run
+
+      # run the testsetup playbook
+      machine.vm.provision "ansible" do |ansible|
+        ansible.limit = "all"
+        ansible.playbook = "testsetup.yaml"
+        ansible.raw_arguments = ['-v']
+        # change ansible.tags for faster testing
+        ansible.tags = 'all'
+        ansible.extra_vars = {
+          ansible_ssh_user: 'vagrant',
+        }
+      end # machine.vm.provision testsetup
+
+      # tests start here
+      machine.vm.provision "shell" do |s|
+        s.inline = "/vagrant/run_all_tests.sh"
+        # don't color output green because its confusing when its a fail
+        s.keep_color = true
+        s.privileged = false
+      end
+
+    end # config.vm.define
+
+  end # HOSTS-each
+
+end # Vagrant.configure
