@@ -4,7 +4,8 @@
 - name: set hostname as per ansible inventory
   hostname:
     name: "{{ inventory_hostname_short }}"
-  tags: hostname
+  tags:
+    - hostname
 
 - name: update hostname in /etc/hosts from inventory
   lineinfile:
@@ -12,7 +13,8 @@
     regexp: '^127\.0\.1\.1'
     line: "127.0.1.1 {{ inventory_hostname }} {{ inventory_hostname_short }}"
     state: present
-  tags: hostname
+  tags:
+    - hostname
 
 - name: add long-hostname option to getty login
   copy:
@@ -33,3 +35,5 @@
     owner: root
     group: root
     mode: 0644
+  tags:
+    - ps1
