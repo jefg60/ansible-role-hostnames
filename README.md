@@ -6,7 +6,7 @@ Ansible role that sets hostname to ansible inventory hostname, and changes bash 
 Requirements
 ------------
 
-None
+Debian or Ubuntu systemd based system
 
 Role Variables
 --------------
