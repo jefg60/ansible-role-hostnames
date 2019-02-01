@@ -1,7 +1,7 @@
 jefg60.hostnames
 =========
 
-Ansible role that sets hostname to ansible inventory hostname, and changes bash prompts and getty login prompts to show fqdn. Also turns on colors in bash prompts with alternate colour for root.
+Ansible role that sets hostname to ansible inventory hostname, and changes bash prompts and getty login prompts to show fqdn. Also turns on colors in bash prompts with alternate color for root.
 
 Requirements
 ------------
